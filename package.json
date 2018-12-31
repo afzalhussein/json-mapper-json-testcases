@@ -1,0 +1,18 @@
+{
+  "name": "json_map",
+  "version": "1.0.0",
+  "description": "JSON mapping demo using json-mapper-json from npmjs.com",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "json",
+    "mapping"
+  ],
+  "author": "Syed A Hussain",
+  "license": "MIT",
+  "devDependencies": {
+    "json-mapper-json": "^1.3.0"
+  }
+}
