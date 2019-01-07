@@ -139,13 +139,13 @@ const jsonMapper = require('json-mapper-json');
 
 jsonMapper({
     name: 'John   ',
-    phone: [ {num:"88",ext:"1"}, {nm:"121",ext:"0"}],
-    vehicle:"$BMW",
+    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
+    vehicle: "$BMW",
 }, {
     'myname': {
         path: 'name', // required
     },
-}).then((res)=>{
+}).then((res) => {
     console.info(res);
 }) // { myname: 'John   ' }
 
@@ -155,8 +155,8 @@ jsonMapper({
 // {  name:’policy.insuredName’}           policy { insuredName:’John’ }
 jsonMapper({
     name: 'John    ',
-    phone: [ {num:"88",ext:"1"}, {nm:"121",ext:"0"}],
-    vehicle:"$BMW",
+    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
+    vehicle: "$BMW",
 }, {
     'policy': {
         path: '$empty',
@@ -166,7 +166,7 @@ jsonMapper({
             }
         }
     },
-}).then((res)=>{
+}).then((res) => {
     console.info(res);
 }) // { policy: { insuredName: 'John    ' } }
 
@@ -205,7 +205,7 @@ jsonMapper({
         nested: {
             insuredName: {
                 path: 'name',
-                formatting: value => '<pre>'+value
+                formatting: value => '<pre>' + value
             }
         }
     }
@@ -226,7 +226,7 @@ jsonMapper({
         nested: {
             insuredName: {
                 path: 'name',
-                formatting: value => value+'<post>'
+                formatting: value => value + '<post>'
             }
         }
     }
@@ -270,8 +270,8 @@ jsonMapper({
                 path: 'name',
                 formatting: (value) => {
                     let trimv = value.trim();
-                   const map= [{John:'foo'}, {Jim: 'bar'}];
-                   return map.filter(v=>v.hasOwnProperty(trimv))[0][trimv];
+                    const map = [{John: 'foo'}, {Jim: 'bar'}];
+                    return map.filter(v => v.hasOwnProperty(trimv))[0][trimv];
                 }
             }
         }
@@ -297,7 +297,7 @@ jsonMapper({
                 path: 'name',
                 formatting: (value) => {
                     let trimv = value.trim();
-                    const map= {John:'foo', Jim: 'bar'};
+                    const map = {John: 'foo', Jim: 'bar'};
                     return map[trimv];
                 }
             }
@@ -323,7 +323,7 @@ jsonMapper({
                 path: '$item',
                 formatting: (value) => {
                     let trimv = value.name.trim();
-                    const map= {John:`hello ${value.name}`, Jim:`bar ${value.name}`};
+                    const map = {John: `hello ${value.name}`, Jim: `bar ${value.name}`};
                     return map[trimv];
                 }
             }
@@ -384,10 +384,10 @@ jsonMapper({
 }).then((res) => {
     console.table(res['policy'].insured);
 }) // ┌─────────┬─────────────────────────┬─────────────────────────┐
-    //│ (index) │            0            │            1            │
-    //├─────────┼─────────────────────────┼─────────────────────────┤
-    //│  phone  │ { num: '88', ext: '1' } │ { nm: '121', ext: '0' } │
-    //└─────────┴─────────────────────────┴─────────────────────────┘
+//│ (index) │            0            │            1            │
+//├─────────┼─────────────────────────┼─────────────────────────┤
+//│  phone  │ { num: '88', ext: '1' } │ { nm: '121', ext: '0' } │
+//└─────────┴─────────────────────────┴─────────────────────────┘
 
 // Example 22
 // test case 12
@@ -402,20 +402,20 @@ jsonMapper({
         path: '$empty',
         nested: {
             insured: {
-               path: '$empty',
+                path: '$empty',
                 nested: {
-                  phone: {
-                       path: '$item',
-                formatting: (value) => {
-                    return value.phone.map(
-                        (v)=>{
-                            let passVal = ''
-                            if (v.hasOwnProperty('num')) passVal='num'; else passVal = 'nm'
-                        return  { 'number': v[passVal].padStart(4,'0'), 'extension': v.ext.padStart(4,'0') }
-                    });
+                    phone: {
+                        path: '$item',
+                        formatting: (value) => {
+                            return value.phone.map(
+                                (v) => {
+                                    let passVal = ''
+                                    if (v.hasOwnProperty('num')) passVal = 'num'; else passVal = 'nm'
+                                    return {'number': v[passVal].padStart(4, '0'), 'extension': v.ext.padStart(4, '0')}
+                                });
+                        }
+                    }
                 }
-                   }
-               }
             }
         }
     }
@@ -424,3 +424,41 @@ jsonMapper({
 }) // { policy: { insured: { phone:  [ { number: '0088', extension: '0001' },
    // { number: '0121', extension: '0000' } ]
 
+// Example 23
+// test case 13
+// {  vehicle:{target:’veh’, prefix:{strip:’$’}, transform:[toLower] }           { veh:  ‘bmw’}
+jsonMapper({
+    name: 'John    ',
+    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
+    vehicle: "$BMW",
+}, {
+    'veh': {
+        path: 'vehicle',
+        formatting: value => value.substr(1).toLowerCase()
+
+    }
+}).then((res) => {
+    console.debug(res);
+}) // { veh: 'bmw' }
+
+// Example 24
+// test case 14
+// Mapping.transformations.myTransformation=x->’hi_’+x
+//
+// {  vehicle:{target:’veh’, transform:[myTransformation] }           { veh:  ‘hi_$bmw’}
+jsonMapper({
+    name: 'John    ',
+    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
+    vehicle: "$BMW",
+}, {
+    'veh': {
+        path: 'vehicle',
+        formatting: value => {
+            return 'hi_' +
+                value.toLowerCase()
+        }
+
+    }
+}).then((res) => {
+    console.debug(res);
+}) // { veh: 'hi_$bmw' }
