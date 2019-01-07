@@ -132,6 +132,7 @@ const jsonMapper = require('json-mapper-json');
 //     phone: [ {num:“88”,ext:”1”} {nm:”121”,ext:”0”}],
 //     vehicle:’$BMW’
 // }
+
 // Example 10
 // test case 1
 // {  name:’myname’}           myname:’John’
@@ -382,4 +383,44 @@ jsonMapper({
     }
 }).then((res) => {
     console.table(res['policy'].insured);
-})
+}) // ┌─────────┬─────────────────────────┬─────────────────────────┐
+    //│ (index) │            0            │            1            │
+    //├─────────┼─────────────────────────┼─────────────────────────┤
+    //│  phone  │ { num: '88', ext: '1' } │ { nm: '121', ext: '0' } │
+    //└─────────┴─────────────────────────┴─────────────────────────┘
+
+// Example 22
+// test case 12
+// {  phone:{target:’policy.insured.phone’,options:{num:{target:’number’, transform:[pad4Digits] }, ext:’extension’ }
+//       policy { insured:{phone:[ {number:“0088”,extension:”1”} {number:”0121”,extension:”0”}]] }
+jsonMapper({
+    name: 'John    ',
+    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
+    vehicle: "$BMW",
+}, {
+    'policy': {
+        path: '$empty',
+        nested: {
+            insured: {
+               path: '$empty',
+                nested: {
+                  phone: {
+                       path: '$item',
+                formatting: (value) => {
+                    return value.phone.map(
+                        (v)=>{
+                            let passVal = ''
+                            if (v.hasOwnProperty('num')) passVal='num'; else passVal = 'nm'
+                        return  { 'number': v[passVal].padStart(4,'0'), 'extension': v.ext.padStart(4,'0') }
+                    });
+                }
+                   }
+               }
+            }
+        }
+    }
+}).then((res) => {
+    console.debug(res.policy.insured.phone);
+}) // { policy: { insured: { phone:  [ { number: '0088', extension: '0001' },
+   // { number: '0121', extension: '0000' } ]
+
