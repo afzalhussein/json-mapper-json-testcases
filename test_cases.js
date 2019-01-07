@@ -2,15 +2,20 @@
 // @name:        Example 1
 // @description: test case 1
 // @example:     {  name:’myname’}           myname:’John’
-jsonMapper({
+const jsonMapper = require('json-mapper-json');
+
+
+const from = {
     name: 'John   ',
     phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
     vehicle: "$BMW",
-}, {
+};
+let template = {
     'myname': {
         path: 'name', // required
     },
-}).then((res) => {
+};
+jsonMapper(from, template).then((res) => {
     console.info(res);
 }) // { myname: 'John   ' }
 
@@ -18,11 +23,7 @@ jsonMapper({
 // Example 2
 // test case 2
 // {  name:’policy.insuredName’}           policy { insuredName:’John’ }
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'policy': {
         path: '$empty',
         nested: {
@@ -39,11 +40,7 @@ jsonMapper({
 // Example 3
 // test case 3
 // {  name:{target:’policy.insuredName’, transform:[‘trim’]}           policy { insuredName:’John’ }
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'policy': {
         path: '$empty',
         nested: {
@@ -60,11 +57,7 @@ jsonMapper({
 // Example 4
 // test case 4
 // {  name:{target:’policy.insuredName’, transform:[{addPrefix:”<pre>”}]           policy { insuredName:’<pre>John   ’ }
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'policy': {
         path: '$empty',
         nested: {
@@ -81,11 +74,7 @@ jsonMapper({
 // Example 5
 // test case 5
 // {  name:{target:’policy.insuredName’, transform:[{addSuffix:”<post>”}]           policy { insuredName:’John   <post>’ }
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'policy': {
         path: '$empty',
         nested: {
@@ -102,11 +91,7 @@ jsonMapper({
 // Example 6
 // test case 6
 // {  name:{target:’policy.insuredName’, transform:[{format:’my name is $value and I drive a $vehicle}}] }           policy { insuredName:’my name is John and I drive a $BMW’}
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'policy': {
         path: '$empty',
         nested: {
@@ -123,11 +108,7 @@ jsonMapper({
 // Example 7
 // test case 7
 // {  name:{target:’policy.insuredName’, transform:[{map:{John:’foo’, Jim:’bar’…}}] }           policy { insuredName:’foo’ }
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'policy': {
         path: '$empty',
         nested: {
@@ -150,11 +131,7 @@ jsonMapper({
 // Mapping.transformations.maps.nameMap = { John:’xyz’,…}
 // {  name:{target:’policy.insuredName’, transform:[{map:{nameMap} }] }
 //       policy { insuredName:’xyz’ }
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'policy': {
         path: '$empty',
         nested: {
@@ -176,11 +153,7 @@ jsonMapper({
 // test case 9
 // Mapping.transformations.maps.nameMapWithVars = { John:{format:’hello $value}’,…}
 // {  name:{target:’policy.insuredName’, transform:[{map:{nameMap} }] }           policy { insuredName:’hello John’ }
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'policy': {
         path: '$empty',
         nested: {
@@ -201,11 +174,7 @@ jsonMapper({
 // Example 10
 // test case 10
 // {  phone:’policy.insured.phone’ }           policy { insured:{ phone:[…] }
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'policy': {
         path: '$empty',
         nested: {
@@ -227,11 +196,7 @@ jsonMapper({
 // test case 11
 // {  phone:{target:’policy.insured.phone’,options:{num:’number’, ext:’extension’ }
 //       policy { insured:{phone:[ {number:“88”,extension:”1”} {number:”121”,extension:”0”}]] }
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'policy': {
         path: '$empty',
         nested: {
@@ -258,11 +223,7 @@ jsonMapper({
 // test case 11
 // {  phone:{target:’policy.insured.phone’,options:{num:{target:’number’, transform:[pad4Digits] }, ext:’extension’ }
 //       policy { insured:{phone:[ {number:“0088”,extension:”1”} {number:”0121”,extension:”0”}]] }
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'policy': {
         path: '$empty',
         nested: {
@@ -292,11 +253,7 @@ jsonMapper({
 // Example 12
 // test case 12
 // {  vehicle:{target:’veh’, prefix:{strip:’$’}, transform:[toLower] }           { veh:  ‘bmw’}
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'veh': {
         path: 'vehicle',
         formatting: value => value.substr(1).toLowerCase()
@@ -311,11 +268,7 @@ jsonMapper({
 // Mapping.transformations.myTransformation=x->’hi_’+x
 //
 // {  vehicle:{target:’veh’, transform:[myTransformation] }           { veh:  ‘hi_$bmw’}
-jsonMapper({
-    name: 'John    ',
-    phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
-    vehicle: "$BMW",
-}, {
+jsonMapper(from, {
     'veh': {
         path: 'vehicle',
         formatting: value => {
