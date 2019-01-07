@@ -10,14 +10,19 @@ const from = {
     phone: [{num: "88", ext: "1"}, {nm: "121", ext: "0"}],
     vehicle: "$BMW",
 };
-let template = {
-    'myname': {
-        path: 'name', // required
-    },
-};
-jsonMapper(from, template).then((res) => {
-    console.info(res);
-}) // { myname: 'John   ' }
+((jm, fm)=>{
+    let template = {
+        'myname': {
+            path: 'name', // required
+        },
+    };
+    let mold = (res) => {
+        console.info(res);
+    };
+
+    jm(fm, template).then(mold) // { myname: 'John   ' }
+})(jsonMapper, from)
+
 
 
 // Example 2
